@@ -177,7 +177,7 @@ extern "C" const uint8_t object_pool_end[] asm("_binary_object_pool_iop_end");
 
 extern "C" void app_main()
 {
-	initialize_spi();
+	// initialize_spi();
 
     // Setup for CAN aux 4 (v42 section controller hardware)
     twai_general_config_t twaiConfig = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)CAN4_RX, (gpio_num_t)CAN4_TX, TWAI_MODE_NORMAL);
@@ -186,17 +186,18 @@ extern "C" void app_main()
     std::shared_ptr<isobus::CANHardwarePlugin> can4Driver = std::make_shared<isobus::TWAIPlugin>(&twaiConfig, &twaiTiming, &twaiFilter);
 
     // Setup for MCP2518 can driver (can1, can2, and can3)
-    std::shared_ptr<isobus::CANHardwarePlugin> can1Driver = std::make_shared<isobus::MCP2515CANInterface>(spiTransactionHandler1.get(), CAN1_CS, CAN1_INT, CAN_BAUD_RATE);
-    std::shared_ptr<isobus::CANHardwarePlugin> can22Driver = std::make_shared<isobus::MCP2515CANInterface>(spiTransactionHandler2.get(), CAN2_CS, CAN2_INT, CAN_BAUD_RATE);
-    std::shared_ptr<isobus::CANHardwarePlugin> can3Driver = std::make_shared<isobus::MCP2515CANInterface>(spiTransactionHandler3.get(), CAN3_CS, CAN3_INT, CAN_BAUD_RATE);
+    // std::shared_ptr<isobus::CANHardwarePlugin> can1Driver = std::make_shared<isobus::MCP2515CANInterface>(spiTransactionHandler1.get(), CAN1_CS, CAN1_INT, CAN_BAUD_RATE);
+    // std::shared_ptr<isobus::CANHardwarePlugin> can22Driver = std::make_shared<isobus::MCP2515CANInterface>(spiTransactionHandler2.get(), CAN2_CS, CAN2_INT, CAN_BAUD_RATE);
+    // std::shared_ptr<isobus::CANHardwarePlugin> can3Driver = std::make_shared<isobus::MCP2515CANInterface>(spiTransactionHandler3.get(), CAN3_CS, CAN3_INT, CAN_BAUD_RATE);
 
     isobus::CANStackLogger::set_can_stack_logger_sink(&logger);
     isobus::CANStackLogger::set_log_level(isobus::CANStackLogger::LoggingLevel::Info); // Change this to Debug to see more information
-    isobus::CANHardwareInterface::set_number_of_can_channels(4);
+    // isobus::CANHardwareInterface::set_number_of_can_channels(4);
+    isobus::CANHardwareInterface::set_number_of_can_channels(1);
     isobus::CANHardwareInterface::assign_can_channel_frame_handler(0, can4Driver);
-    isobus::CANHardwareInterface::assign_can_channel_frame_handler(1, can1Driver);
-    isobus::CANHardwareInterface::assign_can_channel_frame_handler(2, can22Driver);
-    isobus::CANHardwareInterface::assign_can_channel_frame_handler(3, can3Driver);
+    // isobus::CANHardwareInterface::assign_can_channel_frame_handler(1, can1Driver);
+    // isobus::CANHardwareInterface::assign_can_channel_frame_handler(2, can22Driver);
+    // isobus::CANHardwareInterface::assign_can_channel_frame_handler(3, can3Driver);
 
 
     // isobus::CANHardwareInterface::set_periodic_update_interval(10); // 10ms update period matches the default FreeRTOS tick rate of 100Hz
@@ -211,20 +212,20 @@ extern "C" void app_main()
         ESP_LOGE("AgIsoStack", "CAN4 driver is invalid");
     }
 
-    if (!can1Driver->get_is_valid())
-    {
-        ESP_LOGE("AgIsoStack", "CAN1 driver is invalid");
-    }
+    // if (!can1Driver->get_is_valid())
+    // {
+    //     ESP_LOGE("AgIsoStack", "CAN1 driver is invalid");
+    // }
 
-    if (!can22Driver->get_is_valid())
-    {
-        ESP_LOGE("AgIsoStack", "CAN2 driver is invalid");
-    }
+    // if (!can22Driver->get_is_valid())
+    // {
+    //     ESP_LOGE("AgIsoStack", "CAN2 driver is invalid");
+    // }
 
-    if (!can3Driver->get_is_valid())
-    {
-        ESP_LOGE("AgIsoStack", "CAN3 driver is invalid");
-    }
+    // if (!can3Driver->get_is_valid())
+    // {
+    //     ESP_LOGE("AgIsoStack", "CAN3 driver is invalid");
+    // }
 
     isobus::NAME TestDeviceNAME(0);
 
