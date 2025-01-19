@@ -37,6 +37,14 @@ static std::shared_ptr<isobus::VirtualTerminalClientUpdateHelper> virtualTermina
 #define CAN4_RX 8  // CAN4 (AUX)
 #define CAN4_TX 18 // CAN4 (AUX)
 
+#include <stdio.h>
+#include "driver/gpio.h"
+#include "esp_log.h"
+
+#define GPIO_OUTPUT_PIN GPIO_NUM_14  // GPIO14
+#define GPIO_OUTPUT_PIN_SEL (1ULL << GPIO_OUTPUT_PIN)
+
+
 constexpr uint32_t CAN_BAUD_RATE = 250000; 
 constexpr uint32_t SPI_SPEED = 1000000; 
 
@@ -178,6 +186,20 @@ extern "C" const uint8_t object_pool_end[] asm("_binary_object_pool_iop_end");
 extern "C" void app_main()
 {
 	// initialize_spi();
+    
+    // Configure GPIO14 as output
+    gpio_config_t io_conf = {
+        .pin_bit_mask = GPIO_OUTPUT_PIN_SEL, // Pin mask
+        .mode = GPIO_MODE_OUTPUT,           // Set as output mode
+        .pull_up_en = GPIO_PULLUP_DISABLE,  // Disable pull-up
+        .pull_down_en = GPIO_PULLDOWN_DISABLE, // Disable pull-down
+        .intr_type = GPIO_INTR_DISABLE      // Disable interrupts
+    };
+
+    // Apply the configuration
+    gpio_config(&io_conf);
+
+    gpio_set_level(GPIO_OUTPUT_PIN, 1); // Set GPIO14 high
 
     // Setup for CAN aux 4 (v42 section controller hardware)
     twai_general_config_t twaiConfig = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)CAN4_RX, (gpio_num_t)CAN4_TX, TWAI_MODE_NORMAL);
